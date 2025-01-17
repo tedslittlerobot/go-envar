@@ -4,12 +4,12 @@ import (
 	"testing"
 )
 
-func TestPlainValueResolverInterfaceMatch(t *testing.T) {
-	var _ ResolverInterface = PlainValueResolver{}
+func TestRawValueResolverInterfaceMatch(t *testing.T) {
+	var _ ResolverInterface = RawValueResolver{}
 }
 
-func TestPlainValueResolver(t *testing.T) {
-	d := PlainValueResolver{}
+func TestRawValueResolver(t *testing.T) {
+	d := RawValueResolver{}
 	token := SourceToken{
 		Driver:     "Foo",
 		Key:        "Bar",

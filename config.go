@@ -1,15 +1,27 @@
 package envar
 
 type Config struct {
-	Resolvers map[string]ResolverInterface
+	Resolvers            map[string]ResolverInterface
+	WithDefaultResolvers bool
 }
 
 func ApplyDefaultsToConfig(config Config) Config {
-	if len(config.Resolvers) == 0 || config.Resolvers == nil {
-		config.Resolvers = map[string]ResolverInterface{
-			"default": PlainValueResolver{},
+	if config.WithDefaultResolvers {
+		resolvers := config.GetDefaultResolvers()
+
+		for key, resolver := range config.Resolvers {
+			resolvers[key] = resolver
 		}
+
+		config.Resolvers = resolvers
 	}
 
 	return config
+}
+
+func (config Config) GetDefaultResolvers() map[string]ResolverInterface {
+	return map[string]ResolverInterface{
+		"env":     EnvironmentVariableResolver{},
+		"default": RawValueResolver{},
+	}
 }

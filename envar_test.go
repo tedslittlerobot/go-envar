@@ -3,17 +3,20 @@ package envar
 import "testing"
 
 type TestBasicStruct struct {
-	Foo string `envar:"never:baz,default:foo,default:baz"`
-	Bar string `envar:"default:bar"`
+	Foo string `envar:"never:baz,raw:foo,default:baz"`
+	Bar string `envar:"raw:bar"`
 }
 
 func TestEnvar(t *testing.T) {
 	s := TestBasicStruct{}
 
-	c := Config{map[string]ResolverInterface{
-		"default": PlainValueResolver{},
-		"never":   NeverResolver{},
-	}}
+	c := Config{
+		map[string]ResolverInterface{
+			"raw":   RawValueResolver{},
+			"never": NeverResolver{},
+		},
+		false,
+	}
 
 	Envar(&s, c)
 

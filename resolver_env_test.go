@@ -6,11 +6,11 @@ import (
 )
 
 func TestEnvResolverInterfaceMatch(t *testing.T) {
-	var _ ResolverInterface = EnvResolver{}
+	var _ ResolverInterface = EnvironmentVariableResolver{}
 }
 
 func TestEnvResolverWithNoEnvValue(t *testing.T) {
-	d := EnvResolver{}
+	d := EnvironmentVariableResolver{}
 
 	os.Unsetenv("TEST_ENV_RESOLVER_VALUE")
 
@@ -29,7 +29,7 @@ func TestEnvResolverWithNoEnvValue(t *testing.T) {
 }
 
 func TestEnvResolverWithEnvValue(t *testing.T) {
-	d := EnvResolver{}
+	d := EnvironmentVariableResolver{}
 
 	os.Setenv("TEST_ENV_RESOLVER_VALUE", "Monkeys")
 

@@ -2,10 +2,10 @@ package envar
 
 import "os"
 
-type EnvResolver struct{}
+type EnvironmentVariableResolver struct{}
 
-func (resolver EnvResolver) Resolve(token *SourceToken) {
+func (resolver EnvironmentVariableResolver) Resolve(token *SourceToken) {
 	token.Resolve(os.Getenv(token.Key))
 }
 
-func (resolver EnvResolver) PreLoad(tokens []*SourceToken) {}
+func (resolver EnvironmentVariableResolver) PreLoad(tokens []*SourceToken) {}
