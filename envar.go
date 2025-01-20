@@ -6,7 +6,7 @@ import (
 )
 
 func Envar(v interface{}, config Config) {
-	config = ApplyDefaultsToConfig(config)
+	config.ApplyDefaults()
 
 	reflection := CreateReflection(v)
 	registry := envarResolvers.SourceTokenRegistry{}

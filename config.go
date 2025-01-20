@@ -7,8 +7,8 @@ type Config struct {
 	WithDefaultResolvers bool
 }
 
-func ApplyDefaultsToConfig(config Config) Config {
-	if config.WithDefaultResolvers {
+func (config *Config) ApplyDefaults() {
+	if config.WithDefaultResolvers || len(config.Resolvers) == 0 {
 		resolvers := config.GetDefaultResolvers()
 
 		for key, resolver := range config.Resolvers {
@@ -17,11 +17,9 @@ func ApplyDefaultsToConfig(config Config) Config {
 
 		config.Resolvers = resolvers
 	}
-
-	return config
 }
 
-func (config Config) GetDefaultResolvers() map[string]envarResolvers.ResolverInterface {
+func (config *Config) GetDefaultResolvers() map[string]envarResolvers.ResolverInterface {
 	return map[string]envarResolvers.ResolverInterface{
 		"env":     envarResolvers.EnvironmentVariableResolver{},
 		"default": envarResolvers.RawValueResolver{},
