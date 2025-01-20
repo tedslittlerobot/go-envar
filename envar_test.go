@@ -1,30 +1,39 @@
 package envar
 
-import "testing"
+import (
+	"github.com/tedslittlerobot/go-envar/support/resolvers"
+	. "gopkg.in/check.v1"
+	"testing"
+)
 
 type TestBasicStruct struct {
 	Foo string `envar:"never:baz,raw:foo,default:baz"`
 	Bar string `envar:"raw:bar"`
 }
 
-func TestEnvar(t *testing.T) {
-	s := TestBasicStruct{}
+func TestEnvar(t *testing.T) { TestingT(t) }
 
-	c := Config{
-		map[string]ResolverInterface{
-			"raw":   RawValueResolver{},
-			"never": NeverResolver{},
+type EnvarTestSuite struct {
+	Source      TestBasicStruct
+	BasicConfig Config
+}
+
+var _ = Suite(&EnvarTestSuite{})
+
+func (s *EnvarTestSuite) SetUpTest(c *C) {
+	s.Source = TestBasicStruct{}
+	s.BasicConfig = Config{
+		map[string]envarResolvers.ResolverInterface{
+			"raw":   envarResolvers.RawValueResolver{},
+			"never": envarResolvers.NeverResolver{},
 		},
 		false,
 	}
+}
 
-	Envar(&s, c)
+func (s *EnvarTestSuite) TestBasicImport(c *C) {
+	Envar(&s.Source, s.BasicConfig)
 
-	if s.Foo != "foo" {
-		t.Errorf("Foo should be assigned the value 'foo', found [%s]", s.Foo)
-	}
-
-	if s.Bar != "bar" {
-		t.Errorf("Bar should be assigned the value 'bar', found [%s]", s.Foo)
-	}
+	c.Assert(s.Source.Foo, Equals, "foo")
+	c.Assert(s.Source.Bar, Equals, "bar")
 }

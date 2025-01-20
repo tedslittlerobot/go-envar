@@ -1,7 +1,8 @@
 package envar
 
 import (
-	"fmt"
+	"github.com/tedslittlerobot/go-envar/support/resolvers"
+	. "gopkg.in/check.v1"
 	"reflect"
 	"testing"
 )
@@ -12,65 +13,47 @@ type TestReflectionValueSettingStruct struct {
 	IsHuman bool
 }
 
-func TestNewReflection(t *testing.T) {
-	ts := TestReflectionValueSettingStruct{}
+func TestReflection(t *testing.T) { TestingT(t) }
 
-	CreateReflection(&ts)
+type ReflectionTestSuite struct {
+	Source     TestReflectionValueSettingStruct
+	Reflection Reflection
 }
 
-func TestSetFieldValuesSetsSimpleStringValue(t *testing.T) {
-	ts := TestReflectionValueSettingStruct{}
+var _ = Suite(&ReflectionTestSuite{})
 
-	reflection := CreateReflection(&ts)
+func (s *ReflectionTestSuite) SetUpTest(c *C) {
+	s.Source = TestReflectionValueSettingStruct{}
+	s.Reflection = CreateReflection(&s.Source)
+}
 
-	reflection.SetFieldValues([]*Field{
+func (s *ReflectionTestSuite) TestNewReflection(c *C) {
+	//
+}
+
+func (s *ReflectionTestSuite) TestSetFieldValuesSetsSimpleStringValue(c *C) {
+	s.Reflection.SetFieldValues([]*envarResolvers.Field{
 		{
 			"Name",
 			reflect.TypeOf(""),
-			[]*SourceToken{},
+			[]*envarResolvers.SourceToken{},
 			"Monkey",
 		},
-	})
-
-	if ts.Name != "Monkey" {
-		t.Errorf(fmt.Sprintf("name should have the value of 'Monkey' applied, found [%s]", ts.Name))
-	}
-}
-
-func TestSetFieldValuesSetsSimpleIntValue(t *testing.T) {
-	ts := TestReflectionValueSettingStruct{}
-
-	reflection := CreateReflection(&ts)
-
-	reflection.SetFieldValues([]*Field{
 		{
 			"Age",
 			reflect.TypeOf(0),
-			[]*SourceToken{},
+			[]*envarResolvers.SourceToken{},
 			"42",
 		},
-	})
-
-	if ts.Age != 42 {
-		t.Errorf(fmt.Sprintf("Age should have the value of 42 applied, found [%d]", ts.Age))
-	}
-}
-
-func TestSetFieldValuesSetsSimpleBoolValue(t *testing.T) {
-	ts := TestReflectionValueSettingStruct{}
-
-	reflection := CreateReflection(&ts)
-
-	reflection.SetFieldValues([]*Field{
 		{
 			"IsHuman",
 			reflect.TypeOf(false),
-			[]*SourceToken{},
+			[]*envarResolvers.SourceToken{},
 			"true",
 		},
 	})
 
-	if !ts.IsHuman {
-		t.Errorf(fmt.Sprintf("IsHuman should have the value of true applied, found [%v]", ts.IsHuman))
-	}
+	c.Assert(s.Source.Name, Equals, "Monkey")
+	c.Assert(s.Source.Age, Equals, 42)
+	c.Assert(s.Source.IsHuman, Equals, true)
 }

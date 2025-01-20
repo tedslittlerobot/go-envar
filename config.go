@@ -1,7 +1,9 @@
 package envar
 
+import "github.com/tedslittlerobot/go-envar/support/resolvers"
+
 type Config struct {
-	Resolvers            map[string]ResolverInterface
+	Resolvers            map[string]envarResolvers.ResolverInterface
 	WithDefaultResolvers bool
 }
 
@@ -19,9 +21,9 @@ func ApplyDefaultsToConfig(config Config) Config {
 	return config
 }
 
-func (config Config) GetDefaultResolvers() map[string]ResolverInterface {
-	return map[string]ResolverInterface{
-		"env":     EnvironmentVariableResolver{},
-		"default": RawValueResolver{},
+func (config Config) GetDefaultResolvers() map[string]envarResolvers.ResolverInterface {
+	return map[string]envarResolvers.ResolverInterface{
+		"env":     envarResolvers.EnvironmentVariableResolver{},
+		"default": envarResolvers.RawValueResolver{},
 	}
 }

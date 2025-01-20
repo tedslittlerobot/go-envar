@@ -1,6 +1,8 @@
-package envar
+package envarResolvers
 
-import "os"
+import (
+	"os"
+)
 
 type EnvironmentVariableResolver struct{}
 

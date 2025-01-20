@@ -1,6 +1,7 @@
 package envar
 
 import (
+	"github.com/tedslittlerobot/go-envar/support/resolvers"
 	"log"
 	"reflect"
 	"strconv"
@@ -19,8 +20,8 @@ func CreateReflection(v interface{}) Reflection {
 	//reflect.ValueOf(i).Elem().FieldByName(propName).Set(reflect.ValueOf(propValue))
 }
 
-func (reflection Reflection) fields(registry *SourceTokenRegistry) []*Field {
-	var o []*Field
+func (reflection Reflection) fields(registry *envarResolvers.SourceTokenRegistry) []*envarResolvers.Field {
+	var o []*envarResolvers.Field
 
 	for i := 0; i < reflection.Type.NumField(); i++ {
 		field := reflection.Type.Field(i)
@@ -30,7 +31,7 @@ func (reflection Reflection) fields(registry *SourceTokenRegistry) []*Field {
 			continue
 		}
 
-		o = append(o, &Field{
+		o = append(o, &envarResolvers.Field{
 			Name:    field.Name,
 			Type:    field.Type,
 			Sources: registry.RegisterChain(tag),
@@ -41,14 +42,14 @@ func (reflection Reflection) fields(registry *SourceTokenRegistry) []*Field {
 	return o
 }
 
-func (reflection *Reflection) SetFieldValues(fields []*Field) {
+func (reflection *Reflection) SetFieldValues(fields []*envarResolvers.Field) {
 	for _, field := range fields {
 		//log.Printf("updating field %v", field)
 		reflection.Value.FieldByName(field.Name).Set(MakeValueForField(field))
 	}
 }
 
-func MakeValueForField(field *Field) reflect.Value {
+func MakeValueForField(field *envarResolvers.Field) reflect.Value {
 	//log.Printf("making value for field %v", field)
 	//log.Printf("Kind %v | %s", field.Type.Kind(), field.Type.String())
 

@@ -1,4 +1,4 @@
-package envar
+package envarResolvers
 
 type RawValueResolver struct{}
 
