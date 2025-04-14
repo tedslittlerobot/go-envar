@@ -1,6 +1,7 @@
-package envarResolvers
+package envarResolvers_test
 
 import (
+	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
 	. "gopkg.in/check.v1"
 	"testing"
 )
@@ -8,19 +9,19 @@ import (
 func TestRawValueResolver(t *testing.T) { TestingT(t) }
 
 type RawValueResolverTestSuite struct {
-	Resolver RawValueResolver
+	Resolver envarResolvers.RawValueResolver
 }
 
 var _ = Suite(&RawValueResolverTestSuite{})
 
 func (s *RawValueResolverTestSuite) SetUpTest(c *C) {
-	s.Resolver = RawValueResolver{}
+	s.Resolver = envarResolvers.RawValueResolver{}
 }
 
 func (s *RawValueResolverTestSuite) TestInterface(c *C) {}
 
 func (s *RawValueResolverTestSuite) TestResolution(c *C) {
-	token := SourceToken{
+	token := envarResolvers.SourceToken{
 		Driver:     "Foo",
 		Key:        "Bar",
 		IsResolved: false,

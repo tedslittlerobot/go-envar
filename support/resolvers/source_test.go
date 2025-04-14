@@ -1,6 +1,7 @@
-package envarResolvers
+package envarResolvers_test
 
 import (
+	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
 	. "gopkg.in/check.v1"
 	"testing"
 )
@@ -8,13 +9,13 @@ import (
 func TestSourceRegistry(t *testing.T) { TestingT(t) }
 
 type SourceRegistryTestSuite struct {
-	Registry SourceTokenRegistry
+	Registry envarResolvers.SourceTokenRegistry
 }
 
 var _ = Suite(&SourceRegistryTestSuite{})
 
 func (s *SourceRegistryTestSuite) SetUpTest(c *C) {
-	s.Registry = SourceTokenRegistry{}
+	s.Registry = envarResolvers.SourceTokenRegistry{}
 }
 
 func (s *SourceRegistryTestSuite) TestSourceTokenCollectionRegister(c *C) {

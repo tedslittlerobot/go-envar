@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func Envar(v interface{}, config Config) {
+func Apply(v interface{}, config Config) {
 	config.ApplyDefaults()
 
 	reflection := CreateReflection(v)

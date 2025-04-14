@@ -20,7 +20,7 @@ type MyVariables struct {
 func main() {
 	variables := MyVariables{}
 
-	envar.Envar(&variables, envar.Config{})
+	envar.Apply(&variables, envar.Config{})
 
 	log.Printf("Host: %s, Port: %d, Database: %s", variables.SqlHost, variables.SqlPort, variables.SqlDatabase)
 }
@@ -101,7 +101,7 @@ type MyVariables struct {
 func main() {
 	variables := MyVariables{}
 
-	envar.Envar(&variables, envar.Config{
+	envar.Apply(&variables, envar.Config{
 		Resolvers: map[string]envar.ResolverInterface{
 			"peter": AlwaysReturnPeterResolver{},
 		},

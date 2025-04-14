@@ -1,6 +1,7 @@
-package envarResolvers
+package envarResolvers_test
 
 import (
+	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
 	. "gopkg.in/check.v1"
 	"testing"
 )
@@ -8,19 +9,19 @@ import (
 func TestNeverResolver(t *testing.T) { TestingT(t) }
 
 type NeverResolverTestSuite struct {
-	Resolver NeverResolver
+	Resolver envarResolvers.NeverResolver
 }
 
 var _ = Suite(&NeverResolverTestSuite{})
 
 func (s *NeverResolverTestSuite) SetUpTest(c *C) {
-	s.Resolver = NeverResolver{}
+	s.Resolver = envarResolvers.NeverResolver{}
 }
 
 func (s *NeverResolverTestSuite) TestInterface(c *C) {}
 
 func (s *NeverResolverTestSuite) TestResolution(c *C) {
-	token := SourceToken{
+	token := envarResolvers.SourceToken{
 		Driver:     "Foo",
 		Key:        "Bar",
 		IsResolved: false,

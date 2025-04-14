@@ -1,6 +1,7 @@
-package envar
+package envar_test
 
 import (
+	"github.com/tedslittlerobot/go-envar"
 	"github.com/tedslittlerobot/go-envar/support/resolvers"
 	. "gopkg.in/check.v1"
 	"reflect"
@@ -17,14 +18,14 @@ func TestReflection(t *testing.T) { TestingT(t) }
 
 type ReflectionTestSuite struct {
 	Source     TestReflectionValueSettingStruct
-	Reflection Reflection
+	Reflection envar.Reflection
 }
 
 var _ = Suite(&ReflectionTestSuite{})
 
 func (s *ReflectionTestSuite) SetUpTest(c *C) {
 	s.Source = TestReflectionValueSettingStruct{}
-	s.Reflection = CreateReflection(&s.Source)
+	s.Reflection = envar.CreateReflection(&s.Source)
 }
 
 func (s *ReflectionTestSuite) TestNewReflection(c *C) {

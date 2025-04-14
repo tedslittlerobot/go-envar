@@ -1,6 +1,7 @@
-package envar
+package envar_test
 
 import (
+	"github.com/tedslittlerobot/go-envar"
 	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
 	. "gopkg.in/check.v1"
 	"testing"
@@ -9,13 +10,13 @@ import (
 func TestConfig(t *testing.T) { TestingT(t) }
 
 type ConfigTestSuite struct {
-	Config Config
+	Config envar.Config
 }
 
 var _ = Suite(&ConfigTestSuite{})
 
 func (s *ConfigTestSuite) SetUpTest(c *C) {
-	s.Config = Config{}
+	s.Config = envar.Config{}
 }
 
 func (s *ConfigTestSuite) TestGetDefaultResolvers(c *C) {
