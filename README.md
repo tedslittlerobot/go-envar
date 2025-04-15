@@ -22,7 +22,7 @@ type MyVariables struct {
 func main() {
 	variables := MyVariables{}
 	
-	e := envar.MakeWithDefaults()
+	e := envar.Make()
 
 	e.Apply(&variables)
 
@@ -68,6 +68,80 @@ The resolvers you have seen in the examples above are `EnvironmentVariableResolv
 
 These resolvers will be registered automatically for you.
 
+### Configurable Resolvers
+
+#### MapResolver
+
+The `MapResolver` struct allows you to specify an arbitrary map of data (perhaps retrieved from an external source!) to use as a data source.
+
+```go
+package main
+
+import (
+	"github.com/tedslittlerobot/go-envar"
+	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
+	"log"
+)
+
+type MyVariables struct {
+	value   string `envar:"my-map:FOO"`
+	monkeys string `envar:"my-map:MONKEYS,default:no-monkeys"`
+}
+
+func main() {
+	variables := MyVariables{}
+	
+	e := envar.Make()
+
+	e.Resolvers.AddResolver("my-map", envarResolvers.MapResolver{
+		Contents: map[string]string{ // This could be an external call
+			"FOO": "foo",
+			"BAR": "bar",
+			"BAZ": "baz",
+		},
+	})
+
+	e.Apply(&variables)
+
+	log.Printf("value: %s, Monkeys: %s", variables.value, variables.monkeys)
+	// Prints "value: foo, Monkeys: no-monkeys"
+}
+```
+
+#### AWS Parameter Store Resolver
+
+
+There is a helper function to use the current AWS context to fill the `MapResolver` with all SSM parameter store variables from a given path prefix.
+
+There are two helper functions - one which gets you provide a path prefix, and one to retrieve the path prefix from an environment variable. 
+The latter is likely used if you have prefixed the parameter store paths based on say, environment, or tenant. 
+
+```go
+package main
+
+import (
+	"context"
+	"github.com/tedslittlerobot/go-envar"
+	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
+	"log"
+)
+
+type MyVariables struct {
+	value   string `envar:"from-ssm:value"`
+	monkeys string `envar:"from-ssm:value/at/path,default:no-monkeys"`
+}
+
+func main() {
+	variables := MyVariables{}
+	e := envar.Make()
+
+	e.AddSsmResolver(context.TODO(), "from-ssm", "/prod/", true)
+	e.AddSsmResolverFromEnv(context.TODO(), "from-ssm-2", "SSM_PREFIX_ENVIRONMENT_VARIABLE", true)
+
+	e.Apply(&variables)
+}
+```
+
 ### Custom Resolvers
 
 Envar has a driver-based resolver solution, so you can add your own resolvers very easily. You simply need to implement the `ResolverInterface` interface like so:
@@ -84,12 +158,9 @@ func (resolver AlwaysReturnPeterResolver) Resolve(token *envar.SourceToken) {
 	// token.Key will be set to the value after the colon
 	token.Resolve("Peter")
 }
-
-// PreLoad enables you to batch retrieve environment variables in one go. Useful if you are getting variables via a network request of some kind
-func (resolver AlwaysReturnPeterResolver) PreLoad(tokens []*envar.SourceToken) {}
 ```
 
-Then you can register your resolvers on the Config struct when you call Envar:
+Then you can register your resolvers on your Envar instance:
 
 ```go
 package main
@@ -106,15 +177,11 @@ type MyVariables struct {
 }
 
 func main() {
-	variables := MyVariables{}
+	variables := MyVariables{} 
+	e := envar.Make()
+	
+	e.Resolvers.AddResolver("peter", AlwaysReturnPeterResolver{})
 
-	envar.Apply(&variables, envar.Config{
-		Resolvers: map[string]envar.ResolverInterface{
-			"peter": AlwaysReturnPeterResolver{},
-		},
-		// You can specify false to not use the default resolvers (env and default). 
-		//If this is true, this will merge your provided resolvers on top of the internal map.
-		true, 
-    })
+	e.Apply(&variables)
 }
 ```
