@@ -14,7 +14,7 @@ type ResolverRegistry struct {
 	DisableDefaultResolvers bool
 }
 
-func (r ResolverRegistry) GetResolver(name string) ResolverInterface {
+func (r *ResolverRegistry) GetResolver(name string) ResolverInterface {
 	resolver, exists := r.Resolvers[name]
 
 	if exists {
@@ -24,8 +24,18 @@ func (r ResolverRegistry) GetResolver(name string) ResolverInterface {
 	panic(fmt.Sprintf("no resolver found for %s", name))
 }
 
+func (r *ResolverRegistry) AddResolver(name string, resolverInterface ResolverInterface) {
+	r.Resolvers[name] = resolverInterface
+}
+
+func (r *ResolverRegistry) AddResolvers(resolvers map[string]ResolverInterface) {
+	for name, resolverInterface := range resolvers {
+		r.Resolvers[name] = resolverInterface
+	}
+}
+
 // ResolveFieldValue takes a field struct, and resolves it according to the specified resolver map, keyed by Driver name
-func (r ResolverRegistry) ResolveFieldValue(field *Field) {
+func (r *ResolverRegistry) ResolveFieldValue(field *Field) {
 	for _, token := range field.Sources {
 		if !token.IsResolved {
 			r.GetResolver(token.Driver).Resolve(token)

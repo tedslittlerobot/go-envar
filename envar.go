@@ -10,6 +10,18 @@ type Envar struct {
 	SourceTokens envarData.SourceTokenRegistry
 }
 
+func MakeWithDefaults() Envar {
+	return Envar{}
+}
+
+func Make() Envar {
+	return Envar{
+		Resolvers: envarData.ResolverRegistry{
+			//Resolvers: resolvers,
+		},
+	}
+}
+
 func (e *Envar) Apply(v interface{}) {
 	e.SetupDefaultResolvers()
 

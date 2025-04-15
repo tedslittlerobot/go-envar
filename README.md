@@ -19,8 +19,10 @@ type MyVariables struct {
 
 func main() {
 	variables := MyVariables{}
+	
+	e := envar.MakeWithDefaults()
 
-	envar.Apply(&variables, envar.Config{})
+	e.Apply(&variables)
 
 	log.Printf("Host: %s, Port: %d, Database: %s", variables.SqlHost, variables.SqlPort, variables.SqlDatabase)
 }
@@ -47,21 +49,24 @@ type MyVariables struct {
 
 Here, you can see that many environment variables can be attempted in order. The first non-empty value will be allocated to the struct property.
 
-## Fatal Erroring
+## Errors and Handling
 
-If no value can be found in the chain, then Envar will throw a fatal error to crash the application, rather than offloading the error handling logic to the parent application.
+All errors in envar are sent as `panic` calls, rather than bubbling them up as error responses. This decision has been made as typically these errors are all non-recoverable, and should be encountered in the setup part of an application (ie. before the bulk of the application code), and there should be very little by way of valid recovering from such errors.
+
+Regardless, you can always `recover` from a panic if error handling is required.
 
 ## Resolvers
 
-## Basic Resolvers
+### Basic Resolvers
 
 The resolvers you have seen in the examples above are `EnvironmentVariableResolver` (named `env`) `RawValueResolver` (named `default`) respectively.
 
 - `env:MY_VARIABLE` The `EnvironmentVariableResolver` will use a call to `os.Getenv("MY_VARIABLE")` to get its value.
 - `default:foobar` The `RawValueResolver` will always return the value you provide after the colon. This has been nicknamed to `default` as that would typically be how this would be used.
-- Working on an AWS Parameter Store resolver as well!
 
-## Custom Resolvers
+These resolvers will be registered automatically for you.
+
+### Custom Resolvers
 
 Envar has a driver-based resolver solution, so you can add your own resolvers very easily. You simply need to implement the `ResolverInterface` interface like so:
 
