@@ -2,10 +2,12 @@ package envarAws
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
+	"strings"
 )
 
 func MakeDefaultParameterStoreMapResolver(ctx context.Context, prefix string, recursive bool) envarResolvers.MapResolver {
@@ -24,6 +26,9 @@ func MakeParameterStoreClient(ctx context.Context) *ssm.Client {
 }
 
 func GetAllParameterStoreItems(ctx context.Context, client *ssm.Client, prefix string, recursive bool) (output map[string]string) {
+	// sanitise prefix - ensure that it starts and ends with a slash as per aws api docs
+	prefix = fmt.Sprintf("/%s/", strings.Trim(prefix, "/"))
+
 	output = make(map[string]string)
 
 	response, err := client.GetParametersByPath(ctx, &ssm.GetParametersByPathInput{
@@ -38,7 +43,8 @@ func GetAllParameterStoreItems(ctx context.Context, client *ssm.Client, prefix s
 		}
 
 		for _, parameter := range response.Parameters {
-			output[*parameter.Name] = *parameter.Value
+			// sanitise paths - removes the prefix from the key
+			output[strings.Replace(*parameter.Name, prefix, "", 1)] = *parameter.Value
 		}
 
 		if response.NextToken != nil {
