@@ -1,8 +1,7 @@
-package envar_test
+package envarData_test
 
 import (
-	"github.com/tedslittlerobot/go-envar"
-	"github.com/tedslittlerobot/go-envar/support/resolvers"
+	"github.com/tedslittlerobot/go-envar/support/data"
 	. "gopkg.in/check.v1"
 	"reflect"
 	"testing"
@@ -18,14 +17,14 @@ func TestReflection(t *testing.T) { TestingT(t) }
 
 type ReflectionTestSuite struct {
 	Source     TestReflectionValueSettingStruct
-	Reflection envar.Reflection
+	Reflection envarData.Reflection
 }
 
 var _ = Suite(&ReflectionTestSuite{})
 
 func (s *ReflectionTestSuite) SetUpTest(c *C) {
 	s.Source = TestReflectionValueSettingStruct{}
-	s.Reflection = envar.CreateReflection(&s.Source)
+	s.Reflection = envarData.CreateReflection(&s.Source)
 }
 
 func (s *ReflectionTestSuite) TestNewReflection(c *C) {
@@ -33,23 +32,23 @@ func (s *ReflectionTestSuite) TestNewReflection(c *C) {
 }
 
 func (s *ReflectionTestSuite) TestSetFieldValuesSetsSimpleStringValue(c *C) {
-	s.Reflection.SetFieldValues([]*envarResolvers.Field{
+	s.Reflection.SetFieldValues([]*envarData.Field{
 		{
 			"Name",
 			reflect.TypeOf(""),
-			[]*envarResolvers.SourceToken{},
+			[]*envarData.SourceToken{},
 			"Monkey",
 		},
 		{
 			"Age",
 			reflect.TypeOf(0),
-			[]*envarResolvers.SourceToken{},
+			[]*envarData.SourceToken{},
 			"42",
 		},
 		{
 			"IsHuman",
 			reflect.TypeOf(false),
-			[]*envarResolvers.SourceToken{},
+			[]*envarData.SourceToken{},
 			"true",
 		},
 	})

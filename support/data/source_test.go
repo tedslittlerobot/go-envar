@@ -1,7 +1,7 @@
-package envarResolvers_test
+package envarData_test
 
 import (
-	envarResolvers "github.com/tedslittlerobot/go-envar/support/resolvers"
+	envarResolvers "github.com/tedslittlerobot/go-envar/support/data"
 	. "gopkg.in/check.v1"
 	"testing"
 )
