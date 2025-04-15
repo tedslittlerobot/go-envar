@@ -6,7 +6,7 @@ import "github.com/tedslittlerobot/go-envar/support/data"
 type NeverResolver struct{}
 
 func (resolver NeverResolver) Resolve(token *envarData.SourceToken) {
-	token.Resolve("")
+	token.ResolveBlank()
 }
 
 func (resolver NeverResolver) PreLoad(tokens []*envarData.SourceToken) {}

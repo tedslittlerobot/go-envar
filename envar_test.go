@@ -29,36 +29,23 @@ func (s *EnvarTestSuite) SetUpTest(c *C) {
 			"always": envarResolvers.RawValueResolver{},
 			"never":  envarResolvers.NeverResolver{},
 		},
-		DisableDefaultResolvers: true,
 	}
+}
+
+func (s *EnvarTestSuite) TestMake(c *C) {
+	e := envar.Make()
+
+	c.Assert(len(e.Resolvers.Resolvers), Equals, 2)
 }
 
 func (s *EnvarTestSuite) TestApply(c *C) {
 	e := envar.Envar{
-		Resolvers: s.Resolvers,
+		Resolvers:    s.Resolvers,
+		SourceTokens: envarData.SourceTokenRegistry{},
 	}
 
 	e.Apply(&s.Source)
 
 	c.Assert(s.Source.Foo, Equals, "foo")
 	c.Assert(s.Source.Bar, Equals, "bar")
-}
-
-func (s *EnvarTestSuite) TestSetupDefaultResolvers(c *C) {
-	e := envar.Envar{
-		Resolvers: envarData.ResolverRegistry{
-			Resolvers:               map[string]envarData.ResolverInterface{},
-			DisableDefaultResolvers: true,
-		},
-	}
-
-	e.SetupDefaultResolvers()
-
-	c.Assert(len(e.Resolvers.Resolvers), Equals, 0)
-
-	e.Resolvers.DisableDefaultResolvers = false
-
-	e.SetupDefaultResolvers()
-
-	c.Assert(len(e.Resolvers.Resolvers), Equals, 2)
 }

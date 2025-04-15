@@ -20,6 +20,11 @@ func (token *SourceToken) Resolve(value string) {
 	token.IsResolved = true
 }
 
+func (token *SourceToken) ResolveBlank() {
+	token.Value = ""
+	token.IsResolved = true
+}
+
 // SourceTokenRegistry is a collection of SourceToken instances, arranged in a 2d map,
 // indexed by the Driver and Key properties.
 // This ensures that each Driver/Key pair is only registered and instantiated once.

@@ -10,21 +10,21 @@ type Envar struct {
 	SourceTokens envarData.SourceTokenRegistry
 }
 
-func MakeWithDefaults() Envar {
-	return Envar{}
-}
-
 func Make() Envar {
-	return Envar{
+	e := Envar{
 		Resolvers: envarData.ResolverRegistry{
-			//Resolvers: resolvers,
+			Resolvers: map[string]envarData.ResolverInterface{},
 		},
+		SourceTokens: envarData.SourceTokenRegistry{},
 	}
+
+	e.Resolvers.Resolvers["env"] = envarResolvers.EnvironmentVariableResolver{}
+	e.Resolvers.Resolvers["default"] = envarResolvers.RawValueResolver{}
+
+	return e
 }
 
 func (e *Envar) Apply(v interface{}) {
-	e.SetupDefaultResolvers()
-
 	reflection := envarData.CreateReflection(v)
 
 	// get list of fields
@@ -35,20 +35,4 @@ func (e *Envar) Apply(v interface{}) {
 	}
 
 	reflection.SetFieldValues(fields)
-}
-
-func (e *Envar) SetupDefaultResolvers() {
-	if e.Resolvers.DisableDefaultResolvers {
-		return
-	}
-
-	_, exists := e.Resolvers.Resolvers["env"]
-	if !exists {
-		e.Resolvers.Resolvers["env"] = envarResolvers.EnvironmentVariableResolver{}
-	}
-
-	_, exists = e.Resolvers.Resolvers["default"]
-	if !exists {
-		e.Resolvers.Resolvers["default"] = envarResolvers.RawValueResolver{}
-	}
 }
