@@ -3,6 +3,8 @@ Envar for Golang
 
 Easily assign configuration variables from the environment or elsewhere.
 
+**WARNING - STILL VERY MUCH IN DEVELOPMENT - API MAY CHANGE**
+
 ```go
 package main
 
